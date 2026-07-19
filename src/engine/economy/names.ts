@@ -5,7 +5,7 @@
  */
 
 import type { Rng } from "../core/rng";
-import type { Language, LanguageService, Region, World } from "../core/types";
+import type { Language, LanguageService, Region } from "../core/types";
 import { capitalize } from "./helpers";
 
 // ---------------------------------------------------------------------------

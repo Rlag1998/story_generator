@@ -72,8 +72,8 @@ export const loveArc: ArcDef = {
     const world = ctx.world;
     if (!isAdult(world, star)) return 0;
     const age = ageOf(world, star);
-    if (age > 34 || isMarried(star)) return 0;
-    return 0.7 + star.personality.lust * 0.6 + Math.max(0, star.personality.openness) * 0.3;
+    if (age > 36 || isMarried(star)) return 0;
+    return 1.0 + star.personality.lust * 0.6 + Math.max(0, star.personality.openness) * 0.3;
   },
 
   spawn(ctx: Ctx, rng: Rng, star: Person, aids: SpawnAids): Storyline | null {

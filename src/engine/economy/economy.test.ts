@@ -7,7 +7,7 @@
 
 import { describe, expect, it } from "vitest";
 import { monthOf } from "../core/time";
-import type { EventRecord, Person, Region, RegionId } from "../core/types";
+import type { EventRecord, Region, RegionId } from "../core/types";
 import { igniteFire } from "./disasters";
 import { classifyHarvest, HARVEST_MONTH } from "./harvest";
 import { startPlague } from "./plague";

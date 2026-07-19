@@ -38,6 +38,7 @@ function seedPopulation(h: TestHarness, n: number): void {
       [4, 0.5],
     ] as const);
     const p = h.addPerson({
+      sex: r.fork("sex").chance(0.5) ? "f" : "m",
       ageYears: r.fork("age").intIn(17, 55),
       location: h.settlements[i % Math.min(2, h.settlements.length)].id,
       rank,

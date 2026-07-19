@@ -12,7 +12,6 @@
  * only flows from settlements still burning.
  */
 
-import type { Rng } from "../core/rng";
 import type {
   Ctx,
   Person,
@@ -34,8 +33,9 @@ import {
 import { diseaseName, windfallGain } from "./names";
 import { COND, type EconState, hasRoad, type PlagueState, WORLD_COND } from "./state";
 
-/** Expected ~1 outbreak per 75 years before famine/war multipliers. */
-const BASE_MONTHLY_OUTBREAK = 1 / 900;
+/** Tuned with the 15-year gap + active spells to land the world-wide
+ * expectation near one plague per 40-80 years (a generational memory). */
+const BASE_MONTHLY_OUTBREAK = 1 / 520;
 /** No two plagues within 15 years of each other. */
 const MIN_GAP_MONTHS = 180;
 

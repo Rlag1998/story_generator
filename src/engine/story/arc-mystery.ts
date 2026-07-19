@@ -61,9 +61,9 @@ export const mysteryArc: ArcDef = {
     const world = ctx.world;
     if (!isAdult(world, star) || star.location == null) return 0;
     // Rare by design; enemies and lonely trades tip the scales.
-    let w = 0.12;
+    let w = 0.05;
     const solitary = ["fisher", "hunter", "herder", "peddler", "gravedigger", "falconer"].includes(star.status.profession);
-    if (solitary) w += 0.15;
+    if (solitary) w += 0.08;
     return w;
   },
 

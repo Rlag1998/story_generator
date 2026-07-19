@@ -14,7 +14,7 @@
 
 import type { Rng } from "../core/rng";
 import { monthOf } from "../core/time";
-import type { Ctx, EventRecord, Person, Region, Settlement } from "../core/types";
+import type { Ctx, EventRecord, Person, Settlement } from "../core/types";
 import { sortedIds } from "../core/world";
 import { setLean } from "./conditions";
 import {

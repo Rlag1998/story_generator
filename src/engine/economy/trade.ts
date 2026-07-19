@@ -18,8 +18,9 @@ import { COND, type EconState, hasRoad, roadKey } from "./state";
 const P_BOOM = 0.0015;
 /** Months between booms in the same settlement. */
 const BOOM_COOLDOWN = 84;
-/** Month of the yearly road survey. */
-const ROAD_MONTH = 5;
+/** Month of the yearly road survey: after the harvest, while granaries in
+ * regions blessed with plenty are still full (plenty runs ~months 10-15). */
+const ROAD_MONTH = 11;
 /** Yearly chance per qualifying adjacent pair of prosperous regions. */
 const P_ROAD = 0.05;
 

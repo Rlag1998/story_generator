@@ -103,6 +103,11 @@ export interface EconState {
   cometUntil: SimDate;
   /** Built roads as "a-b" region-id pair keys (a < b). */
   roads: string[];
+  /**
+   * settlement id (string key) -> founding abstractPop; good harvests let a
+   * thinned population drift back toward this (never above it).
+   */
+  basePop: Record<string, number>;
   /** Disease names already spent, so no plague is ever named twice. */
   usedDiseaseNames: string[];
 }
@@ -124,6 +129,7 @@ export function econState(world: World): EconState {
       lastDisasterAt: 0,
       cometUntil: 0,
       roads: [],
+      basePop: {},
       usedDiseaseNames: [],
     };
     world.conditions[WORLD_COND.state] = s;

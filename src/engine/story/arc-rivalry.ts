@@ -75,7 +75,10 @@ export const rivalryArc: ArcDef = {
   weight(ctx: Ctx, star: Person): number {
     const world = ctx.world;
     if (!isAdult(world, star) || fieldOf(star) === null) return 0;
-    return 0.8 + star.personality.ambition * 0.8 + Math.max(0, -star.personality.agreeableness) * 0.5;
+    // Needs an appetite for contest, not just a workbench.
+    const appetite = star.personality.ambition + Math.max(0, -star.personality.agreeableness) + Math.max(0, star.personality.wrath) * 0.5;
+    if (appetite < 0.5) return 0;
+    return 0.3 + appetite * 0.45;
   },
 
   spawn(ctx: Ctx, rng: Rng, star: Person, aids: SpawnAids): Storyline | null {

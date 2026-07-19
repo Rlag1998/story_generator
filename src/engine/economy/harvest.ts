@@ -15,7 +15,7 @@ import { monthOf } from "../core/time";
 import type { Biome, Ctx, Region, RegionId } from "../core/types";
 import { sortedIds } from "../core/world";
 import { setFamine, setLean, setPlenty } from "./conditions";
-import { bumpWealth, clamp, neighborsOf, pickWeightedPeople, residentsOf, settlementsOfRegion } from "./helpers";
+import { bumpWealth, clamp, pickWeightedPeople, residentsOf, settlementsOfRegion } from "./helpers";
 import { type EconState, type HarvestOutcome, regionHarvest } from "./state";
 
 export const HARVEST_MONTH = 9;
@@ -106,6 +106,7 @@ export function harvestTick(ctx: Ctx, state: EconState): void {
         break;
       case "normal":
         hist.poorStreak = 0;
+        recoverPop(ctx, state, region, 0.015);
         break;
       case "poor":
         applyPoor(ctx, state, region);
@@ -113,8 +114,25 @@ export function harvestTick(ctx: Ctx, state: EconState): void {
         break;
       case "famine":
         applyFamine(ctx, state, region, localRng, hist.poorStreak);
-        hist.poorStreak++;
+        // The famine is the release of the pressure: the dead need no bread,
+        // the fields lie fallow-rested. The streak breaks.
+        hist.poorStreak = 0;
         break;
+    }
+  }
+}
+
+/**
+ * Good years let the unsimulated crowd drift back toward its founding size
+ * (famine, fire and plague thin it; nothing else would ever restore it).
+ */
+function recoverPop(ctx: Ctx, state: EconState, region: Region, rate: number): void {
+  for (const s of settlementsOfRegion(ctx.world, region)) {
+    const key = String(s.id);
+    if (state.basePop[key] === undefined) state.basePop[key] = s.abstractPop;
+    const base = state.basePop[key];
+    if (s.abstractPop < base) {
+      s.abstractPop = Math.min(base, Math.round(s.abstractPop * (1 + rate)) + 1);
     }
   }
 }
@@ -122,6 +140,7 @@ export function harvestTick(ctx: Ctx, state: EconState): void {
 function applyBountiful(ctx: Ctx, state: EconState, region: Region, rng: Rng): void {
   const { world } = ctx;
   const until = world.now + rng.intIn(5, 7);
+  recoverPop(ctx, state, region, 0.035);
   for (const s of settlementsOfRegion(world, region)) {
     setPlenty(state, s, until);
   }
