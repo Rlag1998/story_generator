@@ -361,7 +361,7 @@ export interface Culture {
   traditions: Tradition[];
   /** Age (years) of legal/ritual adulthood. */
   adulthoodAge: number;
-  /** Typical marriage age offsets for f/m. */
+  /** Typical ABSOLUTE marriage ages in years for f/m. */
   marriageAgeF: number;
   marriageAgeM: number;
   /** Preferred color palette for UI flavor (hex strings). */
