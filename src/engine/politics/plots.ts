@@ -80,8 +80,14 @@ function executeCoups(ctx: Ctx, rng: Rng): void {
     const polity = world.polities.get(plot.polity);
     if (!polity) continue;
     const ruler = livingPerson(world, polity.ruler);
-    if (!ruler || ruler.id === plotter.id) continue;
+    if (ruler && ruler.id === plotter.id) continue;
     const pRng = rng.fork("plot", plotter.id, polity.id);
+    if (!ruler) {
+      // The seat is empty (succession struggle): the plotter stops waiting
+      // for the law and takes the vacant crown by force of arms.
+      seizeEmptyThrone(ctx, pRng.fork("seize"), polity, plotter);
+      continue;
+    }
     const knives = (plotter.phenotype.aptitudes["intrigue"] ?? 0) >= 1 || pRng.fork("method").chance(0.5);
     if (knives) {
       assassinate(ctx, pRng.fork("kill"), polity, plotter, ruler);
@@ -119,6 +125,42 @@ function assassinate(ctx: Ctx, rng: Rng, polity: Polity, plotter: Person, ruler:
   // Succession has already run inside kill(); if fate handed the plotter the
   // crown, the realm suspects nothing yet. Either way the hunger is fed.
   delete plotter.flags[PF.claimant];
+}
+
+/** A claimant marches on a throne that stands empty mid-crisis. */
+function seizeEmptyThrone(ctx: Ctx, rng: Rng, polity: Polity, plotter: Person): void {
+  const world = ctx.world;
+  // coup data: { polity: PolityId, manner: string, emptySeat: true }
+  const coup = ctx.record({
+    type: "coup",
+    date: world.now,
+    participants: { usurper: plotter.id },
+    data: {
+      polity: polity.id,
+      emptySeat: true,
+      manner: rng.fork("manner").pick([
+        "marched on the hall while the law was still arguing",
+        "took the empty chair at spear-point and dared the council to object",
+        "was sitting in the high seat when the lords arrived to debate it",
+      ]),
+    },
+    location: polity.capital,
+    region: regionOfSettlement(world, polity.capital),
+    importance: 50,
+    causes: [],
+    storyline: null,
+    secret: false,
+  });
+  crownRuler(ctx, rng.fork("crown"), polity, plotter, {
+    causes: [coup.id],
+    usurped: true,
+    data: { emptySeat: true },
+  });
+  // Any open crisis for this polity is settled by the fact on the ground.
+  const state = polState(world);
+  for (const key of Object.keys(state.crises)) {
+    if (state.crises[key].polity === polity.id) delete state.crises[key];
+  }
 }
 
 function stageCoup(ctx: Ctx, rng: Rng, polity: Polity, plotter: Person, ruler: Person): void {

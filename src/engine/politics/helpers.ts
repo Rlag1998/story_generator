@@ -73,7 +73,15 @@ export function isAdult(world: World, p: Person): boolean {
 export function isLiving(world: World, id: PersonId | null | undefined): boolean {
   if (id == null) return false;
   const p = world.people.get(id);
-  return !!p && p.died === null && world.alive.has(id) && p.flags["emigrated"] !== true;
+  // location === null covers everyone "beyond the map": emigrants, the
+  // vanished, elopers, exiles, and wanderers (story arcs null it out).
+  return (
+    !!p &&
+    p.died === null &&
+    world.alive.has(id) &&
+    p.flags["emigrated"] !== true &&
+    p.location !== null
+  );
 }
 
 export function livingPerson(world: World, id: PersonId | null | undefined): Person | null {

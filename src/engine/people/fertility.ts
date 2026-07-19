@@ -133,7 +133,8 @@ export function pregnancyTick(
   if (conceptionAgeFactor(age) <= 0) return;
 
   const husband = livingPerson(world, activeMarriages(p)[0]?.spouse ?? null);
-  if (husband && husband.sex === "m") {
+  // A husband beyond the map (vanished, wandering, exiled) fathers nothing.
+  if (husband && husband.sex === "m" && husband.location !== null) {
     const chance = computeConceptionChance(
       world.alive.size,
       world.params.popCap,

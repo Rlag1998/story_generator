@@ -106,6 +106,12 @@ export const POLITICS_RENDERERS: Record<string, EvRenderer> = {
     const realm = c.polityName("polity");
     const manner = c.str("manner");
     const how = manner ? ` The way of it: ${manner}.` : "";
+    if (c.bool("emptySeat")) {
+      return [
+        `The empty throne of ${realm} found an occupant who did not wait to be asked: ${un}.${how}`,
+        `While ${realm} argued succession, ${un} ended the argument by sitting down in the high seat.${how}`,
+      ];
+    }
     return [
       `In one night the order of ${realm} was overturned: ${un} seized power and ${dn} was put aside.${how}`,
       `A coup in ${realm}. ${un} took the hall, the seal, and the morning's proclamations.${how}`,

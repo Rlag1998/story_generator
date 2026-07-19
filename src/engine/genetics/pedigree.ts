@@ -17,18 +17,32 @@
 
 import type { PersonId, World } from "../core/types";
 
+/**
+ * Recursion depth cap. Each expansion step halves the possible contribution,
+ * so ancestors beyond this horizon contribute < 2^-12 ≈ 0.0002 — far below
+ * any gate the simulation applies (cousin marriages sit at 0.0625). Without
+ * the cap, centuries-old interlocked pedigrees make the exact recursion
+ * explore hundreds of thousands of ancestor pairs per query (~20ms each),
+ * which was the dominant cost of the marriage market in late-history worlds.
+ */
+const MAX_DEPTH = 12;
+
 export function inbreeding(world: World, motherId: PersonId, fatherId: PersonId): number {
   if (motherId === fatherId) return 0.5;
-  const memo = new Map<string, number>();
+  const memo = new Map<number, number>();
+  // Numeric pair key: ids stay far below 2^26 in practice (bounded population
+  // over bounded centuries), so a*2^26+b is collision-free within a run.
+  const PAIR = 1 << 26;
 
   const parents = (id: PersonId): [PersonId | null, PersonId | null] => {
     const p = world.people.get(id);
     return p ? [p.mother, p.father] : [null, null];
   };
 
-  const kin = (a: PersonId | null, b: PersonId | null): number => {
+  const kin = (a: PersonId | null, b: PersonId | null, depth: number): number => {
     if (a == null || b == null) return 0;
-    const key = a < b ? `${a}:${b}` : `${b}:${a}`;
+    if (depth > MAX_DEPTH) return 0;
+    const key = (a < b ? a * PAIR + b : b * PAIR + a);
     const cached = memo.get(key);
     if (cached !== undefined) return cached;
 
@@ -36,17 +50,17 @@ export function inbreeding(world: World, motherId: PersonId, fatherId: PersonId)
     if (a === b) {
       // Self-coancestry carries the individual's own inbreeding.
       const [ma, pa] = parents(a);
-      val = 0.5 * (1 + kin(ma, pa));
+      val = 0.5 * (1 + kin(ma, pa, depth + 1));
     } else {
       // Expand the younger individual (larger id) toward its parents.
       const younger = a < b ? b : a;
       const other = a < b ? a : b;
       const [m, f] = parents(younger);
-      val = 0.5 * (kin(m, other) + kin(f, other));
+      val = 0.5 * (kin(m, other, depth + 1) + kin(f, other, depth + 1));
     }
     memo.set(key, val);
     return val;
   };
 
-  return Math.min(kin(motherId, fatherId), 0.5);
+  return Math.min(kin(motherId, fatherId, 0), 0.5);
 }

@@ -238,7 +238,11 @@ export function healthTick(
   p.illnesses = keep;
   if (p.illnesses.length > 4) {
     // A body can only carry so many complaints; keep the worst.
-    p.illnesses.sort((a, b) => b.severity - a.severity || a.name.localeCompare(b.name));
+    // (Codepoint comparison, NOT localeCompare: sort order must never
+    // depend on the host machine's locale.)
+    p.illnesses.sort(
+      (a, b) => b.severity - a.severity || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0),
+    );
     p.illnesses = p.illnesses.slice(0, 4);
   }
 }

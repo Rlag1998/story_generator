@@ -168,7 +168,7 @@ export const DEEDS_RENDERERS: Record<string, EvRenderer> = {
   },
 
   "song-composed": (c) => {
-    const p = c.person("subject", "bard", "voice");
+    const p = c.person("subject", "bard", "voice", "singer");
     const n = c.nameOf(p, "a voice with no name attached");
     const theme = c.str("theme");
     const form = c.strOr("form", "a song");

@@ -582,7 +582,7 @@ function finalParagraph(world: World, p: Person, chron: EventRecord[]): string {
   const an = /^[aeiou]/.test(prof) ? "an" : "a";
   const profNote = prof !== "none" ? `, ${prof === "ruler" || prof === "noble" ? "a person of rank" : `${an} ${prof}`}` : "";
   const placeName = p.location !== null ? world.settlements.get(p.location)?.name : undefined;
-  const at = placeName ? ` at ${placeName}` : p.flags["people.emigrated"] === true ? ", somewhere beyond the map's edge" : "";
+  const at = placeName ? ` at ${placeName}` : p.location === null ? ", somewhere beyond the map's edge" : "";
   sentences.push(`So the chronicle stands for now. ${shortName(world, p)} is in ${pr.poss} ${ordinalYearWord(age)} year${profNote}${at}.`);
 
   const spouse = spouseOf(world, p);

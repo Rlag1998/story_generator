@@ -54,6 +54,12 @@ The engine is a set of isolated modules wired together by `src/engine/engine.ts`
   should themselves record a public event (e.g. `affair-discovered`) with the
   secret event in `causes`.
 - **Person flags**: namespaced keys (`"story.cursed"`, `"pol.claimant"`).
+  `"story.masterwork-done"` carries the masterwork EVENT ID (number) so the
+  eventual title grant can cite it as a cause.
+- **Absence**: `person.location === null` means "beyond the map" (emigrated,
+  vanished, eloped, exiled, wandering). Absent people must not be crowned,
+  betrothed, matched, or conceive with a present spouse; use presence checks,
+  not just `world.alive`.
 - **Population cap**: `world.params.popCap`. The people module dampens
   fertility and emits `emigrated` events as `alive` approaches the cap.
 

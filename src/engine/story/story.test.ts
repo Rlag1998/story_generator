@@ -490,7 +490,7 @@ describe("specific arc behavior", () => {
       if (mw) {
         expect(mw.importance).toBe(35);
         expect(typeof mw.data["title"]).toBe("string");
-        expect(sc.star.flags[SF.masterworkDone]).toBe(true);
+        expect(typeof sc.star.flags[SF.masterworkDone]).toBe("number");
         expect(sc.star.epithet).not.toBe("");
         done = { h: sc.h, s };
       }

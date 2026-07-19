@@ -232,6 +232,9 @@ function marriageEligible(world: World, p: Person): boolean {
   if (p.died !== null) return false;
   if (isMarried(p) || p.betrothed !== null) return false;
   if (p.flags[F.emigrated] === true) return false;
+  // The absent (vanished, wandering, fled) are off the market until they
+  // walk back into the world.
+  if (p.location === null) return false;
   const mourning = numFlag(p, F.mourningUntil);
   if (mourning !== null && world.now < mourning) return false;
   // Celibate clergy stand apart from the market (their scandals are affairs).

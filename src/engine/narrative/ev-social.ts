@@ -155,7 +155,7 @@ export const SOCIAL_RENDERERS: Record<string, EvRenderer> = {
     const r = c.person("receiver", "to");
     const gn = c.nameOf(g, "a well-wisher");
     const rn = c.nameOf(r, "a neighbor");
-    const what = c.str("gift") ?? c.str("gesture");
+    const what = c.str("gift") ?? c.str("gesture") ?? c.str("what");
     const thing = what ? `: ${what}` : "";
     return [
       `${gn} brought ${rn} a gift${thing}.`,

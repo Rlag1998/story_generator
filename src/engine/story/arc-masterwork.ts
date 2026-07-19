@@ -202,7 +202,8 @@ export const masterworkArc: ArcDef = {
         data: { kind: a.s.data["workKind"], title },
         importance: 35,
       });
-      artisan.flags[SF.masterworkDone] = true;
+      // Store the event id so the eventual title grant can cite it as cause.
+      artisan.flags[SF.masterworkDone] = ev.id;
       artisan.status.wealth = Math.min(5, artisan.status.wealth + 1);
       bestowEpithet(
         a.ctx,

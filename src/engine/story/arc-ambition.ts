@@ -237,7 +237,8 @@ export const ambitionArc: ArcDef = {
           data: { kind: climber.status.profession, title: "the piece that silenced the doubters" },
           importance: pick === "triumph" ? 32 : 24,
         });
-        climber.flags[SF.masterworkDone] = true;
+        // Event id, so the title grant can cite the work as its cause.
+        climber.flags[SF.masterworkDone] = crestEv.id;
       } else if (goal === "wealth") {
         crestEv = a.beat({
           type: "fortune-made",
