@@ -6,6 +6,9 @@ The engine is a set of isolated modules wired together by `src/engine/engine.ts`
 
 1. **No cross-module imports.** A module imports ONLY from `src/engine/core/*`.
    Everything else it needs arrives via `Ctx.services` (see `core/types.ts`).
+   *Single exception:* `gen/culture` and `gen/religion` MAY import the public
+   API of `gen/language` (a strict DAG: language ← culture ← religion), since
+   worldgen calls happen before the services registry is available.
 2. **Exact factory export.** Each module's `index.ts` exports exactly the
    factory named in the table below, returning its service interface from
    `core/types.ts`. Internal files/helpers are free-form within the module dir.
