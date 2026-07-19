@@ -71,22 +71,9 @@ export const curseArc: ArcDef = {
     const world = ctx.world;
     if (!isAdult(world, star)) return 0;
     const mysticism = cultureOf(world, star)?.attitudes.mysticism ?? 0.5;
-    // A grievance hot enough to curse over: a strong bitter memory naming
-    // a living person of another family.
+    // A grievance hot enough to curse over: a strong bitter memory.
     const memories = world.memories.get(star.id) ?? [];
-    const grudge = memories.some((m) => {
-      if (m.feeling > -0.6 || m.about === null) return false;
-      const cause = world.events.get(m.event);
-      if (!cause) return false;
-      for (const role of Object.keys(cause.participants)) {
-        const pid = cause.participants[role];
-        if (pid === star.id || pid === m.about) continue;
-        const other = livingPerson(world, pid);
-        if (other && other.house !== star.house) return true;
-      }
-      return false;
-    });
-    const wronged = grudge || memories.some((m) => m.feeling <= -0.7);
+    const wronged = memories.some((m) => m.feeling <= -0.65);
     if (!wronged) return 0;
     return (0.4 + Math.max(0, star.personality.volatility) * 0.5 + star.personality.piety * 0.4) * (0.4 + mysticism);
   },
@@ -116,7 +103,10 @@ export const curseArc: ArcDef = {
       }
       if (target) break;
     }
-    if (!target || target.house === star.house) return null;
+    if (!target) return null;
+    // One does not curse one's own hearth: same (real) house or close kin.
+    if (target.house !== null && target.house === star.house) return null;
+    if (closeKinIds(world, star).includes(target.id)) return null;
     const s = beginStoryline(ctx, {
       kind: "curse",
       cast: { wronged: star.id, target: target.id },

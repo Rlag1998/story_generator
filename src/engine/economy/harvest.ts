@@ -37,8 +37,9 @@ const BOUNTIFUL_AT = 1.05;
 const POOR_BELOW = -0.9;
 const FAMINE_BELOW = -1.6;
 
-/** Extra downward shift per consecutive poor-or-worse year. */
+/** Extra downward shift per consecutive poor year (capped: no death spiral). */
 const STREAK_PENALTY = 0.25;
+const STREAK_CAP = 3;
 
 /** Classify one region's year from the shared weather field. */
 export function classifyHarvest(
@@ -64,7 +65,11 @@ export function classifyHarvest(
     if (n > 0) neighborAvg = sum / n;
   }
   const score =
-    global * 0.5 + own * 0.55 + neighborAvg * 0.3 + weather.shift - STREAK_PENALTY * poorStreak;
+    global * 0.5 +
+    own * 0.55 +
+    neighborAvg * 0.3 +
+    weather.shift -
+    STREAK_PENALTY * Math.min(STREAK_CAP, poorStreak);
   if (score >= BOUNTIFUL_AT) return "bountiful";
   if (score < FAMINE_BELOW) return "famine";
   if (score < POOR_BELOW) return "poor";
