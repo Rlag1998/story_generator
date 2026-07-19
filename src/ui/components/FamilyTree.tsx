@@ -39,6 +39,7 @@ function subtreeWidth(world: World, id: PersonId, depth: number, maxDepth: numbe
 
 export function FamilyTree({ focus, maxDepth = 3 }: { focus: Person; maxDepth?: number }) {
   const { world } = useWorld();
+  const wrapRef = React.useRef<HTMLDivElement>(null);
 
   const { nodes, lines, width, height } = useMemo(() => {
     const nodes: Laid[] = [];
@@ -137,8 +138,17 @@ export function FamilyTree({ focus, maxDepth = 3 }: { focus: Person; maxDepth?: 
     return { nodes, lines, width, height };
   }, [world, focus.id, maxDepth, world.people.size]);
 
+  // Open the view centered on the focus person, not the tree's left edge.
+  React.useEffect(() => {
+    const el = wrapRef.current;
+    const focusNode = nodes.find((n) => n.id === focus.id && n.depth === 0);
+    if (el && focusNode) {
+      el.scrollLeft = Math.max(0, focusNode.x - el.clientWidth / 2);
+    }
+  }, [focus.id, nodes]);
+
   return (
-    <div className="treewrap" style={{ maxHeight: 640 }}>
+    <div className="treewrap" style={{ maxHeight: 640 }} ref={wrapRef}>
       <div style={{ position: "relative", width, height }}>
         <svg width={width} height={height} style={{ position: "absolute", inset: 0 }}>
           {lines.map((l, i) => (

@@ -60,12 +60,20 @@ export class Cx {
 
   // -- people ---------------------------------------------------------------
 
-  /** First person found under any of the given roles. */
+  /** First person found under any of the given roles. Falls back to a
+   * numeric person id stored under the same key in `data` — used for people
+   * referenced by an event without being credited in their own chronicle
+   * (e.g. the granter of a routine title). */
   person(...roles: string[]): Person | null {
     for (const r of roles) {
       const id = this.ev.participants[r];
       if (id !== undefined) {
         const p = this.world.people.get(id);
+        if (p) return p;
+      }
+      const did = this.ev.data[r];
+      if (typeof did === "number") {
+        const p = this.world.people.get(did);
         if (p) return p;
       }
     }

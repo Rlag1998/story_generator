@@ -179,6 +179,13 @@ function natureParagraph(world: World, p: Person): string {
     const early = upbringing.length > 0 ? `${cap(upbringing)}, ${pr.subj} is still small` : `${pr.Subj} is still small`;
     return `${early}, and it is early to say what ${pr.subj} will be. The household watches, as households do.`;
   }
+  if (p.died !== null && age < 10) {
+    // Those who died as children get no adult character sketch; what they
+    // were is exactly what was taken.
+    const pr = pronouns(p.sex);
+    const opening = upbringing.length > 0 ? `${cap(upbringing)}. ` : "";
+    return `${opening}What ${pr.subj} might have grown into, no chronicle can say. The record keeps only the beginning.`;
+  }
   const temper = temperamentParagraph(p);
   if (upbringing.length > 0) {
     return `${cap(upbringing)}. ${temper}`;

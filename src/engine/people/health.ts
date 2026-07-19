@@ -175,7 +175,7 @@ export function healthTick(
       severity = Math.round(severity * 100) / 100;
       p.illnesses.push({ name, onset: world.now, severity, chronic: false });
       // Only sickbeds worth remembering enter the chronicle.
-      if (severity >= 0.4) {
+      if (severity >= 0.5) {
         const ev = ctx.record({
           type: "illness",
           date: world.now,
@@ -208,7 +208,7 @@ export function healthTick(
       // Recovered.
       const flagKey = illEventFlag(ill.name);
       const onsetEv = p.flags[flagKey];
-      if (typeof onsetEv === "number" && ill.severity >= 0.5) {
+      if (typeof onsetEv === "number" && ill.severity >= 0.6) {
         ctx.record({
           type: "recovery",
           date: world.now,

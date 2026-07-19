@@ -27,10 +27,13 @@ export function MapSvg({ height = 420 }: { height?: number }) {
   }, [world.polities.size]);
 
   const regions = sortedIds(world.regions).map((id) => world.regions.get(id)!);
+  // Fit the viewBox to the regions actually present (plus margin).
+  const maxY = Math.max(...regions.map((r) => r.y * 0.78)) + 14;
+  const minY = Math.min(...regions.map((r) => r.y * 0.78)) - 14;
 
   return (
     <svg
-      viewBox="0 0 100 78"
+      viewBox={`0 ${minY} 100 ${maxY - minY}`}
       style={{ width: "100%", height, background: "#12100d", borderRadius: 6 }}
     >
       {/* adjacency roads */}

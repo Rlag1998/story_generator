@@ -161,7 +161,7 @@ export function PersonPage() {
                 p.litterMates.map((m) => <PersonRow key={m} id={m} meta={p.litterMates.length > 1 ? "triplet" : "twin"} />)}
               {p.marriages.map((m) => (
                 <PersonRow
-                  key={m.spouse}
+                  key={`${m.spouse}:${m.date}`}
                   id={m.spouse}
                   meta={m.active ? `spouse since ${fmtDate(m.date)}` : `former spouse (${m.endReason ?? "ended"})`}
                 />

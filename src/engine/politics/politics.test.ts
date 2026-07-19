@@ -267,7 +267,9 @@ describe("honors", () => {
     }
     expect(granted).not.toBeNull();
     expect(granted!.participants.subject).toBe(hero.id);
-    expect(granted!.participants.granter).toBe(king.id);
+    // Granter is referenced in data, not participants, so routine grants
+    // don't flood the ruler's own chronicle.
+    expect(granted!.data.granter).toBe(king.id);
     expect(granted!.importance).toBe(15);
     expect(hero.status.rank).toBe(2);
     expect(hero.status.titles.length).toBe(1);

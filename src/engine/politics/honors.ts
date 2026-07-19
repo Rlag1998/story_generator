@@ -88,14 +88,17 @@ function grantTitles(ctx: Ctx, rng: Rng): void {
         ]);
     p.status.titles.push(title);
 
-    // title-granted data: { title: string, rank: number, reason: string }
+    // title-granted data: { title: string, rank: number, reason: string,
+    // granter: PersonId } — granter lives in data, not participants, so
+    // routine grants don't flood the ruler's own chronicle or notability.
     ctx.record({
       type: "title-granted",
       date: world.now,
-      participants: { subject: p.id, granter: ruler.id },
+      participants: { subject: p.id },
       data: {
         title,
         rank: newRank,
+        granter: ruler.id,
         reason: forWar
           ? "for valor under the banners"
           : "for work no living hand could better",
