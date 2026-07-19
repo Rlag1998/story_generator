@@ -43,9 +43,13 @@ export class Rng {
   private d: number;
   /** The label path that produced this stream (for debugging). */
   readonly label: string;
+  /** Seed entropy carried into every fork (labels alone must never
+   * determine a child stream, or different world seeds would collide). */
+  private readonly salt: number;
 
   constructor(seed: string | number, label = "root") {
     const s = typeof seed === "number" ? seed >>> 0 : fnv1a(seed);
+    this.salt = s;
     const mix = splitmix32(s);
     this.a = (mix() * 4294967296) >>> 0;
     this.b = (mix() * 4294967296) >>> 0;
@@ -74,7 +78,10 @@ export class Rng {
    */
   fork(...parts: (string | number)[]): Rng {
     const childLabel = this.label + "/" + parts.join(":");
-    return new Rng(fnv1a(childLabel), childLabel);
+    // Mix the parent's salt with the label hash so the same label path under
+    // different world seeds yields different (but stable) streams.
+    const childSeed = (fnv1a(childLabel) ^ Math.imul(this.salt, 0x9e3779b1)) >>> 0;
+    return new Rng(childSeed, childLabel);
   }
 
   /** Integer in [0, n). */
